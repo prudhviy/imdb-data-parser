@@ -17,6 +17,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import logging
+import json
 from abc import *
 from ..utils.filehandler import FileHandler
 from ..utils.regexhelper import RegExHelper
@@ -51,6 +52,8 @@ class BaseParser(metaclass=ABCMeta):
 
         if (self.mode == "TSV"):
           self.tsv_file = self.filehandler.get_tsv_file()
+        elif (self.mode == "JSON"):
+          self.json_file = self.filehandler.get_json_file()
         elif (self.mode == "SQL"):
           self.sql_file = self.filehandler.get_sql_file()
           self.scripthelper = DbScriptHelper(self.db_table_info)
@@ -90,6 +93,8 @@ class BaseParser(metaclass=ABCMeta):
                      and let it decide what to do when regEx is matched and unmatched
                     '''
                     self.parse_into_tsv(matcher)
+                elif(self.mode == "JSON"):
+                    self.parse_into_json(matcher)
                 elif(self.mode == "SQL"):
                     self.parse_into_db(matcher)
                 else:
@@ -114,8 +119,15 @@ class BaseParser(metaclass=ABCMeta):
 
     def concat_regex_groups(self, group_list, col_list, matcher):
         ret_val = ""
-        if col_list == None:
+
+        if self.mode == "TSV":
             ret_val = self.seperator.join('%s' % (matcher.group(i)) for i in group_list)
+        elif self.mode == "JSON":
+            ret_obj = {}
+
+            for i in group_list:
+                ret_obj[self.json_info['keys'][i - 1]] = matcher.group(i)
+                ret_val = json.dumps(ret_obj)
         else:
             for i in range(len(group_list)):
                 if DbScriptHelper.keywords['string'] in self.db_table_info['columns'][col_list[i]]['colinfo']:
@@ -123,6 +135,7 @@ class BaseParser(metaclass=ABCMeta):
                 else:
                     ret_val += matcher.group(group_list[i]) + ", "
             ret_val = ret_val[:-2]
+        
         return ret_val
 
     ##### Below methods force associated properties to be defined in any derived class #####

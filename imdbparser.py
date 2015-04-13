@@ -45,6 +45,8 @@ args = parser.parse_args()
 # preparing preferences map
 if args.mode:
     mode = args.mode
+elif MODE:
+    mode = 'JSON'
 else: #default
     mode = "TSV"
 

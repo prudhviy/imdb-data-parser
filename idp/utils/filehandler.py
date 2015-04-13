@@ -32,6 +32,9 @@ class FileHandler(object):
     def tsv_path(self):
         return os.path.join(self.preferences_map['output_dir'], self.list_name) + ".tsv"
 
+    def json_path(self):
+        return os.path.join(self.preferences_map['output_dir'], self.list_name) + ".json"
+
     def sql_path(self):
         return os.path.join(self.preferences_map['output_dir'], self.list_name) + ".sql"
 
@@ -66,6 +69,9 @@ class FileHandler(object):
 
     def get_tsv_file(self):
         return open(self.tsv_path(), "w", encoding='utf-8')
+
+    def get_json_file(self):
+        return open(self.json_path(), "w", encoding='utf-8')
 
     def get_sql_file(self):
         return open(self.sql_path(), "w", encoding='utf-8')
