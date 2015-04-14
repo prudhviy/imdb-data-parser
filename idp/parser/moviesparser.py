@@ -54,11 +54,33 @@ class MoviesParser(BaseParser):
         ],
         'constraints' : 'PRIMARY KEY(title)'
     }
+
+    json_info = {
+        'keys' : [
+            {'title': 'string'},
+            {'full_name': 'string'},
+            {'type': 'string'},
+            {'series_info': 'string'},
+            {'ep_name': 'string'},
+            {'ep_num': 'string'},
+            {'suspended': 'string'},
+            {'year': 'string'}
+        ]
+    }
     end_of_dump_delimiter = "--------------------------------------------------------------------------------"
 
     def __init__(self, preferences_map):
         super(MoviesParser, self).__init__(preferences_map)
         self.first_one = True
+
+    def parse_into_json(self, matcher):
+        is_match = matcher.match(self.base_matcher_pattern)
+
+        if(is_match):
+            self.json_file.write(self.concat_regex_groups([1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], matcher) + "\n")
+        else:
+            logging.critical("This line is fucked up: " + matcher.get_last_string())
+            self.fucked_up_count += 1
 
     def parse_into_tsv(self, matcher):
         is_match = matcher.match(self.base_matcher_pattern)
