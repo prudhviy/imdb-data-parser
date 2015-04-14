@@ -58,7 +58,7 @@ class RatingsParser(BaseParser):
             {'title': 'string'}
         ]
     }
-    end_of_dump_delimiter = ""
+    end_of_dump_delimiter = "------------------------------------------------------------------------------"
 
     def __init__(self, preferences_map):
         super(RatingsParser, self).__init__(preferences_map)
