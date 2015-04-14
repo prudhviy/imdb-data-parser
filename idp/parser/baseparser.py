@@ -126,7 +126,17 @@ class BaseParser(metaclass=ABCMeta):
             ret_obj = {}
 
             for i in group_list:
-                ret_obj[self.json_info['keys'][i - 1]] = matcher.group(i)
+                key = list(self.json_info['keys'][i - 1].keys())[0]
+                key_type = list(self.json_info['keys'][i - 1].values())[0]
+
+                if key_type == 'string':
+                    value = str(matcher.group(i))
+                elif key_type == 'int':
+                    value = int(matcher.group(i))
+                elif key_type == 'float':
+                    value = float(matcher.group(i))
+
+                ret_obj[key] = value
                 ret_val = json.dumps(ret_obj)
         else:
             for i in range(len(group_list)):
