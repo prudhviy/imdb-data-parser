@@ -51,7 +51,12 @@ class RatingsParser(BaseParser):
         'constraints' : 'PRIMARY KEY(title)'
     }
     json_info = {
-        'keys' : ['distribution', 'votes', 'rank', 'title']
+        'keys' : [
+            {'distribution': 'string'},
+            {'votes': 'int'},
+            {'rank': 'float'},
+            {'title': 'string'}
+        ]
     }
     end_of_dump_delimiter = ""
 
