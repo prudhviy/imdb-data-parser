@@ -15,7 +15,10 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import re
+import json
 from .baseparser import *
+from ..utils.regexhelper import RegExHelper
 
 
 class MoviesParser(BaseParser):
@@ -38,6 +41,7 @@ class MoviesParser(BaseParser):
 
     # properties
     base_matcher_pattern = "((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$"
+    movie_type_pattern = '(".+")' # check if the full_name is in quotes to determine if it is a TV series 
     input_file_name = "movies.list"
     #FIXME: zafer: I think using a static number is critical for us. If imdb sends a new file with first 10 line fucked then we're also fucked
     number_of_lines_to_be_skipped = 15
@@ -73,11 +77,32 @@ class MoviesParser(BaseParser):
         super(MoviesParser, self).__init__(preferences_map)
         self.first_one = True
 
+    def get_movie_type(self, matcher):
+        """ Find out if the current line is about TV series or a Video Movie or Movie """
+        movie_type_matcher = RegExHelper(matcher.group(2))
+        is_match = movie_type_matcher.match(self.movie_type_pattern)
+
+        movie_type = matcher.group(3)
+
+        if is_match:
+            if matcher.group(3) not in ['(TV)', '(V)']:
+                movie_type = '(TV_SERIES)'
+        else:
+            if matcher.group(3) not in ['(TV)', '(V)']:
+                movie_type = '(MOVIE)'
+
+        return movie_type
+
     def parse_into_json(self, matcher):
+
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            self.json_file.write(self.concat_regex_groups([1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], matcher) + "\n")
+            movie_type = self.get_movie_type(matcher)
+            json_string = self.concat_regex_groups([1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], matcher)
+            movie_info = json.loads(json_string)
+            movie_info['type'] = self.get_movie_type(matcher)           
+            self.json_file.write(json.dumps(movie_info) + '\n')
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1
