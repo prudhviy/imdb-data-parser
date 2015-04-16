@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import json
 from .baseparser import *
 
 
@@ -54,7 +55,24 @@ class ActorsParser(BaseParser):
         ],
         'constraints' : 'PRIMARY KEY(title)'
     }
-    end_of_dump_delimiter = ""
+
+    json_info = {
+        'keys' : [
+            {'name': 'string'},
+            {'movie_title': 'string'},
+            {'movie_name_year': 'string'},
+            {'movie_type': 'string'},
+            {'series_info': 'string'},
+            {'ep_name': 'string'},
+            {'ep_num': 'string'},
+            {'is_suspended': 'string'},
+            {'info_1': 'string'},
+            {'info_2': 'string'},
+            {'role': 'string'}
+        ]
+    }
+
+    end_of_dump_delimiter = "-----------------------------------------------------------------------------"
 
     name = ""
     surname = ""
@@ -62,6 +80,31 @@ class ActorsParser(BaseParser):
     def __init__(self, preferences_map):
         super(ActorsParser, self).__init__(preferences_map)
         self.first_one = True
+
+    def parse_into_json(self, matcher):
+        is_match = matcher.match(self.base_matcher_pattern)
+
+        if(is_match):
+            if(len(matcher.group(1).strip()) > 0):
+                namelist = matcher.group(1).split(', ')
+                if(len(namelist) == 2):
+                    self.name = namelist[1]
+                    self.surname = namelist[0]
+                else:
+                    self.name = namelist[0]
+                    self.surname = ""
+            
+            json_string = self.concat_regex_groups([2,9,10,11], None, matcher)
+            json_obj = json.loads(json_string)
+            json_obj['name'] = self.name
+            json_obj['surname'] = self.surname
+            self.json_file.write(json.dumps(json_obj) + "\n")
+        elif(len(matcher.get_last_string()) == 1):
+            pass
+        else:
+            logging.critical("This line is fucked up: " + matcher.get_last_string())
+            self.fucked_up_count += 1
+
 
     def parse_into_tsv(self, matcher):
         is_match = matcher.match(self.base_matcher_pattern)
