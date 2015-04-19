@@ -124,10 +124,11 @@ class BaseParser(metaclass=ABCMeta):
             ret_val = self.seperator.join('%s' % (matcher.group(i)) for i in group_list)
         elif self.mode == "JSON":
             ret_obj = {}
-
+            cnt = 0
+            
             for i in group_list:
-                key = list(self.json_info['keys'][i - 1].keys())[0]
-                key_type = list(self.json_info['keys'][i - 1].values())[0]
+                key = list(self.json_info['keys'][cnt].keys())[0]
+                key_type = list(self.json_info['keys'][cnt].values())[0]
 
                 if key_type == 'string':
                     value = str(matcher.group(i))
@@ -138,6 +139,7 @@ class BaseParser(metaclass=ABCMeta):
 
                 ret_obj[key] = value
                 ret_val = json.dumps(ret_obj)
+                cnt += 1
         else:
             for i in range(len(group_list)):
                 if DbScriptHelper.keywords['string'] in self.db_table_info['columns'][col_list[i]]['colinfo']:
