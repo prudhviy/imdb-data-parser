@@ -94,7 +94,7 @@ class ActorsParser(BaseParser):
                     self.name = namelist[0]
                     self.surname = ""
             
-            json_string = self.concat_regex_groups([2,9,10,11], None, matcher)
+            json_string = self.concat_regex_groups([2,9,10,11], None, matcher, "actor")
             json_obj = json.loads(json_string)
             json_obj['name'] = self.name
             json_obj['surname'] = self.surname

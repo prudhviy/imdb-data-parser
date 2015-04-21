@@ -99,7 +99,7 @@ class MoviesParser(BaseParser):
 
         if(is_match):
             movie_type = self.get_movie_type(matcher)
-            json_string = self.concat_regex_groups([1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], matcher)
+            json_string = self.concat_regex_groups([1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], matcher, "movie")
             movie_info = json.loads(json_string)
             movie_info['type'] = self.get_movie_type(matcher)           
             self.json_file.write(json.dumps(movie_info) + '\n')

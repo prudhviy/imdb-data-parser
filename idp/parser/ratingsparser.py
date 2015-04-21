@@ -69,7 +69,7 @@ class RatingsParser(BaseParser):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            self.json_file.write(self.concat_regex_groups([1,2,3,4], [1,2,3,4], matcher) + "\n")
+            self.json_file.write(self.concat_regex_groups([1,2,3,4], [1,2,3,4], matcher, "rating") + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1

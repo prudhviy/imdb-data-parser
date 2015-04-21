@@ -73,7 +73,7 @@ class GenresParser(BaseParser):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            json_string = self.concat_regex_groups([1,8], [1, 8], matcher)
+            json_string = self.concat_regex_groups([1,8], [1, 8], matcher, "genre")
             json_obj = json.loads(json_string)
             json_obj['year'] = self.get_movie_year(matcher.group(2))
             self.json_file.write(json.dumps(json_obj) + "\n")

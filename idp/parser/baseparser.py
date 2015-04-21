@@ -117,13 +117,13 @@ class BaseParser(metaclass=ABCMeta):
         # fuckedUpCount is calculated in implementing class
         logging.info("Finished with " + str(self.fucked_up_count) + " fucked up line")
 
-    def concat_regex_groups(self, group_list, col_list, matcher):
+    def concat_regex_groups(self, group_list, col_list, matcher, doc_type):
         ret_val = ""
 
         if self.mode == "TSV":
             ret_val = self.seperator.join('%s' % (matcher.group(i)) for i in group_list)
         elif self.mode == "JSON":
-            ret_obj = {}
+            ret_obj = {"doc_type": doc_type}
             cnt = 0
             
             for i in group_list:
