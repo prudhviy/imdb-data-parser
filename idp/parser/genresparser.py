@@ -16,6 +16,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .baseparser import *
+import json
 
 
 class GenresParser(BaseParser):
@@ -60,11 +61,22 @@ class GenresParser(BaseParser):
         super(GenresParser, self).__init__(preferences_map)
         self.first_one = True
 
+    def get_movie_year(self, movie_year):
+        """ movie_year: has info as following, movie + (year) """
+        split_list = movie_year.split(" ")
+        year = split_list[-1]
+        year = year.replace("(", "")
+        year = year.replace(")", "")
+        return year
+
     def parse_into_json(self, matcher):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            self.json_file.write(self.concat_regex_groups([1,8], [1, 8], matcher) + "\n")
+            json_string = self.concat_regex_groups([1,8], [1, 8], matcher)
+            json_obj = json.loads(json_string)
+            json_obj['year'] = self.get_movie_year(matcher.group(2))
+            self.json_file.write(json.dumps(json_obj) + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1
