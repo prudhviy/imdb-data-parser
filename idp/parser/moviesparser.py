@@ -148,10 +148,6 @@ class MoviesParser(BaseParser):
                 movie_info = json.loads(json_string)
                 movie_info['movie_type'] = MoviesParser.get_movie_type(matcher.group(2), matcher.group(3))
                 movie_info['movie_name'] = MoviesParser.get_movie_name(matcher.group(2))
-                
-                if(movie_info['movie_type'] != MoviesParser.TYPE_TV_SERIES):
-                    del movie_info['tv_series_years_active']
-
                 movie_info['year_released'] = MoviesParser.get_year_released(matcher.group(2))
                 self.json_file.write(json.dumps(movie_info) + '\n')
         else:
