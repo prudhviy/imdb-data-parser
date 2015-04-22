@@ -118,9 +118,9 @@ class MoviesParser(BaseParser):
             is_match = non_movie_name_matcher.match(non_movie_name_pattern)
             
             if is_match:
-                return (non_movie_name_matcher.group(1)).lower()
+                return non_movie_name_matcher.group(1)
             else:
-                return (matcher.group(1)).lower()
+                return matcher.group(1)
 
         error = "something went wrong with movie name parsing"
         print(error, movie_year)
