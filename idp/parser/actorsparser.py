@@ -100,6 +100,7 @@ class ActorsParser(BaseParser):
             json_obj['name'] = self.name
             json_obj['surname'] = self.surname
             json_obj['movie_name'] = MoviesParser.get_movie_name(matcher.group(3))
+            json_obj['type'] = MoviesParser.get_movie_type(matcher.group(3), matcher.group(4))
             self.json_file.write(json.dumps(json_obj) + "\n")
         elif(len(matcher.get_last_string()) == 1):
             pass

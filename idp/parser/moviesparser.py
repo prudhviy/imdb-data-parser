@@ -127,19 +127,19 @@ class MoviesParser(BaseParser):
         return error
 
     @staticmethod
-    def get_movie_type(matcher):
+    def get_movie_type(movie_year, info):
         """ Find out if the current line is about TV series or a Video Movie or Movie """
         movie_type_pattern = '(".+")' # check if the full_name is in quotes to determine if it is a TV series 
-        movie_type_matcher = RegExHelper(matcher.group(2))
+        movie_type_matcher = RegExHelper(movie_year)
         is_match = movie_type_matcher.match(movie_type_pattern)
 
-        movie_type = matcher.group(3)
+        movie_type = info
 
         if is_match:
-            if matcher.group(3) not in [MoviesParser.TYPE_TV_MOVIE, MoviesParser.TYPE_VIDEO]:
+            if movie_type not in [MoviesParser.TYPE_TV_MOVIE, MoviesParser.TYPE_VIDEO]:
                 movie_type = MoviesParser.TYPE_TV_SERIES
         else:
-            if matcher.group(3) not in [MoviesParser.TYPE_TV_MOVIE, MoviesParser.TYPE_VIDEO]:
+            if movie_type not in [MoviesParser.TYPE_TV_MOVIE, MoviesParser.TYPE_VIDEO]:
                 movie_type = MoviesParser.TYPE_VIDEO
 
         return movie_type
@@ -152,7 +152,7 @@ class MoviesParser(BaseParser):
         if(is_match):
             json_string = self.concat_regex_groups([1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], matcher, "movie")
             movie_info = json.loads(json_string)
-            movie_info['type'] = MoviesParser.get_movie_type(matcher)
+            movie_info['type'] = MoviesParser.get_movie_type(matcher.group(2), matcher.group(3))
             
             movie_info['movie_name'] = MoviesParser.get_movie_name(matcher.group(2))
             
