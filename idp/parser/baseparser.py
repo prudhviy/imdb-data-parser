@@ -18,6 +18,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 import re
 import logging
 import json
+import time
 from abc import *
 from ..utils.filehandler import FileHandler
 from ..utils.regexhelper import RegExHelper
@@ -78,6 +79,7 @@ class BaseParser(metaclass=ABCMeta):
         self.fucked_up_count = 0
         counter = 0
         number_of_processed_lines = 0
+        start_time = time.time()
 
         for line in self.input_file : #assuming the file is opened in the subclass before here
             if(number_of_processed_lines >= self.number_of_lines_to_be_skipped):
@@ -101,6 +103,11 @@ class BaseParser(metaclass=ABCMeta):
                     raise NotImplemented("Mode: " + self.mode)
 
             number_of_processed_lines +=  1
+
+            if(number_of_processed_lines%25000 == 0):
+                end_time = time.time()
+                time_taken = end_time - start_time
+                print("File name: %s \t Lines processed: %d \t Elapsed time: %d secs" % (self.input_file_name, number_of_processed_lines, time_taken))
 
             #print("Processed lines: %d\r" % (number_of_processed_lines), end="")
 

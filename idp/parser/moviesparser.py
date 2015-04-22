@@ -65,14 +65,7 @@ class MoviesParser(BaseParser):
 
     json_info = {
         'keys' : [
-            {'title': 'string'},
-            {'full_name': 'string'},
-            {'type': 'string'},
-            {'series_info': 'string'},
-            {'ep_name': 'string'},
-            {'ep_num': 'string'},
-            {'suspended': 'string'},
-            {'tv_series_years_active': 'string'}
+            {'movie_type': 'string'}
         ]
     }
     end_of_dump_delimiter = "--------------------------------------------------------------------------------"
@@ -140,7 +133,7 @@ class MoviesParser(BaseParser):
                 movie_type = MoviesParser.TYPE_TV_SERIES
         else:
             if movie_type not in [MoviesParser.TYPE_TV_MOVIE, MoviesParser.TYPE_VIDEO]:
-                movie_type = MoviesParser.TYPE_VIDEO
+                movie_type = MoviesParser.TYPE_MOVIE
 
         return movie_type
 
@@ -150,17 +143,17 @@ class MoviesParser(BaseParser):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            json_string = self.concat_regex_groups([1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], matcher, "movie")
-            movie_info = json.loads(json_string)
-            movie_info['type'] = MoviesParser.get_movie_type(matcher.group(2), matcher.group(3))
-            
-            movie_info['movie_name'] = MoviesParser.get_movie_name(matcher.group(2))
-            
-            if(movie_info['type'] != MoviesParser.TYPE_TV_SERIES):
-                del movie_info['tv_series_years_active']
+            if(MoviesParser.get_movie_type(matcher.group(2), matcher.group(3)) == MoviesParser.TYPE_MOVIE):
+                json_string = self.concat_regex_groups([3], [3], matcher, "movie")
+                movie_info = json.loads(json_string)
+                movie_info['movie_type'] = MoviesParser.get_movie_type(matcher.group(2), matcher.group(3))
+                movie_info['movie_name'] = MoviesParser.get_movie_name(matcher.group(2))
+                
+                if(movie_info['movie_type'] != MoviesParser.TYPE_TV_SERIES):
+                    del movie_info['tv_series_years_active']
 
-            movie_info['year_released'] = MoviesParser.get_year_released(matcher.group(2))
-            self.json_file.write(json.dumps(movie_info) + '\n')
+                movie_info['year_released'] = MoviesParser.get_year_released(matcher.group(2))
+                self.json_file.write(json.dumps(movie_info) + '\n')
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1

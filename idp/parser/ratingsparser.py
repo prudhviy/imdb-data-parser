@@ -56,8 +56,7 @@ class RatingsParser(BaseParser):
         'keys' : [
             {'distribution': 'string'},
             {'votes': 'int'},
-            {'rank': 'float'},
-            {'title': 'string'}
+            {'rank': 'float'}
         ]
     }
     end_of_dump_delimiter = "------------------------------------------------------------------------------"
@@ -71,11 +70,13 @@ class RatingsParser(BaseParser):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            json_string = self.concat_regex_groups([1,2,3,4], [1,2,3,4], matcher, "rating")
-            json_obj = json.loads(json_string)
-            json_obj['year_released'] = MoviesParser.get_year_released(matcher.group(5))
-            json_obj['movie_name'] = MoviesParser.get_movie_name(matcher.group(5))
-            self.json_file.write(json.dumps(json_obj) + "\n")
+            if(MoviesParser.get_movie_type(matcher.group(5), matcher.group(6)) == MoviesParser.TYPE_MOVIE):
+                json_string = self.concat_regex_groups([1,2,3], [1,2,3], matcher, "rating")
+                json_obj = json.loads(json_string)
+                json_obj['year_released'] = MoviesParser.get_year_released(matcher.group(5))
+                json_obj['movie_name'] = MoviesParser.get_movie_name(matcher.group(5))
+                json_obj['movie_type'] = MoviesParser.get_movie_type(matcher.group(5), matcher.group(6))
+                self.json_file.write(json.dumps(json_obj) + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1
