@@ -24,7 +24,7 @@ from ..utils.regexhelper import RegExHelper
 class MoviesParser(BaseParser):
     """
     Parses movies.list dump
-
+    More info: http://stackoverflow.com/questions/12649636/sorting-imdb-ftp-data-title-type
     RegExp: /((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$/gm
     pattern: ((.*? \(\S{4,}\)) ?(\(\S+\))? ?(?!\{\{SUSPENDED\}\})(\{(.*?) ?(\(\S+?\))?\})? ?(\{\{SUSPENDED\}\})?)\t+(.*)$
     flags: gm
