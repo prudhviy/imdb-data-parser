@@ -16,6 +16,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .baseparser import *
+from .moviesparser import MoviesParser
 
 
 class ActressesParser(BaseParser):

@@ -17,6 +17,7 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
 from .baseparser import *
+from .moviesparser import MoviesParser
 
 
 class ActorsParser(BaseParser):
@@ -94,10 +95,11 @@ class ActorsParser(BaseParser):
                     self.name = namelist[0]
                     self.surname = ""
             
-            json_string = self.concat_regex_groups([2,9,10,11], None, matcher, "actor")
+            json_string = self.concat_regex_groups([1,2,3,4,5,6,7,8,9,10,11], [1,2,3,4,5,6,7,8,9,10,11], matcher, "actor")
             json_obj = json.loads(json_string)
             json_obj['name'] = self.name
             json_obj['surname'] = self.surname
+            json_obj['movie_name'] = MoviesParser.get_movie_name(matcher.group(3))
             self.json_file.write(json.dumps(json_obj) + "\n")
         elif(len(matcher.get_last_string()) == 1):
             pass

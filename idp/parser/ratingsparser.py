@@ -16,6 +16,8 @@ along with imdb-data-parser.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .baseparser import *
+from .moviesparser import MoviesParser
+import json
 
 
 class RatingsParser(BaseParser):
@@ -69,7 +71,11 @@ class RatingsParser(BaseParser):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
-            self.json_file.write(self.concat_regex_groups([1,2,3,4], [1,2,3,4], matcher, "rating") + "\n")
+            json_string = self.concat_regex_groups([1,2,3,4], [1,2,3,4], matcher, "rating")
+            json_obj = json.loads(json_string)
+            json_obj['year_released'] = MoviesParser.get_year_released(matcher.group(5))
+            json_obj['movie_name'] = MoviesParser.get_movie_name(matcher.group(5))
+            self.json_file.write(json.dumps(json_obj) + "\n")
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1
