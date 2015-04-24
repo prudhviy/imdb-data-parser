@@ -50,6 +50,7 @@ class BaseParser(metaclass=ABCMeta):
         self.mode = preferences_map['mode']
         self.filehandler = FileHandler(self.input_file_name, preferences_map)
         self.input_file = self.filehandler.get_input_file()
+        self.log_file = self.filehandler.get_log_file()
 
         if (self.mode == "TSV"):
           self.tsv_file = self.filehandler.get_tsv_file()
@@ -104,7 +105,7 @@ class BaseParser(metaclass=ABCMeta):
 
             number_of_processed_lines +=  1
 
-            if(number_of_processed_lines%25000 == 0):
+            if(number_of_processed_lines%50000 == 0):
                 end_time = time.time()
                 time_taken = end_time - start_time
                 print("File name: %s \t Lines processed: %d \t Elapsed time: %d secs" % (self.input_file_name, number_of_processed_lines, time_taken))

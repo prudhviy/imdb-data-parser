@@ -48,6 +48,7 @@ class MoviesParser(BaseParser):
     TYPE_TV_MOVIE = '(TV)' # TV movie (a single episode, produced for TV)
     TYPE_VIDEO = '(V)' # video movie (straight to video)
     TYPE_MOVIE = '(MOVIE)' # theatre movie
+    TYPE_VG = '(VG)' # ?
 
     db_table_info = {
         'tablename' : 'movies',
@@ -77,12 +78,12 @@ class MoviesParser(BaseParser):
     @staticmethod
     def split_movie_year(movie_year):
         """ Splits movie + year into regex groups and returns the matcher """
-        year_pattern = '(.+)\s\((.+)\)$'
-        year_matcher = RegExHelper(movie_year)
-        is_match = year_matcher.match(year_pattern)
+        movie_year_pattern = '(.+)\s\((.+)\)$'
+        movie_year_matcher = RegExHelper(movie_year)
+        is_match = movie_year_matcher.match(movie_year_pattern)
 
         if is_match:
-            return year_matcher
+            return movie_year_matcher
 
         return None
 
@@ -90,13 +91,18 @@ class MoviesParser(BaseParser):
     def get_year_released(movie_year):
         """ movie_year: has info as following, movie + (year) """
         matcher = MoviesParser.split_movie_year(movie_year)
-
+            
         if matcher:
-            return matcher.group(2)
+            year_pattern = '([0-9]{4})'
+            year_matcher = RegExHelper(matcher.group(2))
+            is_match = year_matcher.match(year_pattern)
+
+            if is_match:
+                return year_matcher.group(1)
 
         error = "something went wrong with year in movie parsing"
         print(error, movie_year)
-        return error
+        return '????'
 
     @staticmethod
     def get_movie_name(movie_year):
@@ -128,11 +134,12 @@ class MoviesParser(BaseParser):
 
         movie_type = info
 
+        
         if is_match:
-            if movie_type not in [MoviesParser.TYPE_TV_MOVIE, MoviesParser.TYPE_VIDEO]:
+            if movie_type not in [MoviesParser.TYPE_TV_MOVIE, MoviesParser.TYPE_VIDEO, MoviesParser.TYPE_VG]:
                 movie_type = MoviesParser.TYPE_TV_SERIES
         else:
-            if movie_type not in [MoviesParser.TYPE_TV_MOVIE, MoviesParser.TYPE_VIDEO]:
+            if movie_type not in [MoviesParser.TYPE_TV_MOVIE, MoviesParser.TYPE_VIDEO, MoviesParser.TYPE_VG]:
                 movie_type = MoviesParser.TYPE_MOVIE
 
         return movie_type
@@ -143,6 +150,7 @@ class MoviesParser(BaseParser):
         is_match = matcher.match(self.base_matcher_pattern)
 
         if(is_match):
+
             if(MoviesParser.get_movie_type(matcher.group(2), matcher.group(3)) == MoviesParser.TYPE_MOVIE):
                 json_string = self.concat_regex_groups([3], [3], matcher, "movie")
                 movie_info = json.loads(json_string)

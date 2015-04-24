@@ -29,6 +29,9 @@ class FileHandler(object):
     def full_path(self):
         return os.path.join(self.preferences_map['input_dir'], self.list_name)
 
+    def log_file_path(self):
+        return os.path.join(self.preferences_map['output_dir'], 'log_' + self.list_name) + ".txt"
+
     def tsv_path(self):
         return os.path.join(self.preferences_map['output_dir'], self.list_name) + ".tsv"
 
@@ -72,6 +75,9 @@ class FileHandler(object):
 
     def get_json_file(self):
         return open(self.json_path(), "w", encoding='utf-8')
+
+    def get_log_file(self):
+        return open(self.log_file_path(), "w", encoding='utf-8')
 
     def get_sql_file(self):
         return open(self.sql_path(), "w", encoding='utf-8')
