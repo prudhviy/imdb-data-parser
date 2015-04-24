@@ -87,14 +87,14 @@ class ActorsParser(BaseParser):
                 else:
                     self.name = namelist[0]
                     self.surname = ""
-            if(MoviesParser.get_movie_type(matcher.group(3), matcher.group(4)) == MoviesParser.TYPE_MOVIE):
-                json_string = self.concat_regex_groups([1,3,4,11], [1,3,4,11], matcher, "actor")
-                json_obj = json.loads(json_string)
-                json_obj['name'] = self.name + " " + self.surname
-                json_obj['movie_name'] = MoviesParser.get_movie_name(matcher.group(3))
-                json_obj['movie_type'] = MoviesParser.get_movie_type(matcher.group(3), matcher.group(4))
-                json_obj['year_released'] = MoviesParser.get_year_released(matcher.group(3))
-                self.json_file.write(json.dumps(json_obj) + "\n")
+            #if(MoviesParser.get_movie_type(matcher.group(3), matcher.group(4)) == MoviesParser.TYPE_MOVIE):
+            json_string = self.concat_regex_groups([1,3,4,11], [1,3,4,11], matcher, "actor")
+            json_obj = json.loads(json_string)
+            json_obj['name'] = self.name + " " + self.surname
+            json_obj['movie_name'] = MoviesParser.get_movie_name(matcher.group(3))
+            json_obj['movie_type'] = MoviesParser.get_movie_type(matcher.group(3), matcher.group(4))
+            json_obj['year_released'] = MoviesParser.get_year_released(matcher.group(3))
+            self.json_file.write(json.dumps(json_obj) + "\n")
         elif(len(matcher.get_last_string()) == 1):
             pass
         else:

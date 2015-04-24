@@ -151,13 +151,13 @@ class MoviesParser(BaseParser):
 
         if(is_match):
 
-            if(MoviesParser.get_movie_type(matcher.group(2), matcher.group(3)) == MoviesParser.TYPE_MOVIE):
-                json_string = self.concat_regex_groups([3], [3], matcher, "movie")
-                movie_info = json.loads(json_string)
-                movie_info['movie_type'] = MoviesParser.get_movie_type(matcher.group(2), matcher.group(3))
-                movie_info['movie_name'] = MoviesParser.get_movie_name(matcher.group(2))
-                movie_info['year_released'] = MoviesParser.get_year_released(matcher.group(2))
-                self.json_file.write(json.dumps(movie_info) + '\n')
+            #if(MoviesParser.get_movie_type(matcher.group(2), matcher.group(3)) == MoviesParser.TYPE_MOVIE):
+            json_string = self.concat_regex_groups([3], [3], matcher, "movie")
+            movie_info = json.loads(json_string)
+            movie_info['movie_type'] = MoviesParser.get_movie_type(matcher.group(2), matcher.group(3))
+            movie_info['movie_name'] = MoviesParser.get_movie_name(matcher.group(2))
+            movie_info['year_released'] = MoviesParser.get_year_released(matcher.group(2))
+            self.json_file.write(json.dumps(movie_info) + '\n')
         else:
             logging.critical("This line is fucked up: " + matcher.get_last_string())
             self.fucked_up_count += 1
